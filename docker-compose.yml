@@ -1,0 +1,52 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: vyro_studio
+      POSTGRES_USER: vyro_app
+      POSTGRES_PASSWORD: change_me_in_production
+    ports:
+      - "5432:5432"
+    volumes:
+      - vyro_pgdata:/var/lib/postgresql/data
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: 3000
+      NODE_ENV: production
+      SQL_HOST: postgres
+      SQL_DB_NAME: vyro_studio
+      SQL_USER: vyro_app
+      SQL_PASSWORD: change_me_in_production
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+      GPU_WORKER_URL: http://gpu-worker:8000
+    depends_on:
+      - postgres
+
+  gpu-worker:
+    build:
+      context: ./backend-gpu
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      - vyro_models:/models
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+volumes:
+  vyro_pgdata:
+  vyro_models:

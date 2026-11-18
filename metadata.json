@@ -1,0 +1,6 @@
+{
+  "name": "VYRO AI STUDIO",
+  "description": "Next-generation professional AI Video Generation Platform — Text-to-Video, Image-to-Video, AI Voice, Lip Sync, Music, Character Consistency, Multi-Scene Storyboarding, and NLE Studio.",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
